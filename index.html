@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Puzzles — Brain Training Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="hub">
+      <header class="hub-hero">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="eyebrow">Brain Training</p>
+        <h1>Daily Puzzles</h1>
+        <p class="subtitle">
+          Pick a challenge and see how sharp your memory is today.
+        </p>
+      </header>
+
+      <section class="games-grid" aria-label="Choose a game">
+        <a class="game-card" href="games/name-faces/index.html" style="--card-accent: #3563ff">
+          <div class="game-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M8.5 14.3c.9 1.1 2.1 1.7 3.5 1.7s2.6-.6 3.5-1.7" />
+              <circle cx="9" cy="9.8" r="0.9" fill="currentColor" stroke="none" />
+              <circle cx="15" cy="9.8" r="0.9" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+          <h2>Names &amp; Faces</h2>
+          <p>Study ten faces and their names, then match every name from memory.</p>
+          <footer>
+            <span class="chip">Memory</span>
+            <span class="play">Play now <span aria-hidden="true">&rarr;</span></span>
+          </footer>
+        </a>
+
+        <a class="game-card" href="games/qr/index.html" style="--card-accent: #149761">
+          <div class="game-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5z" />
+              <path d="M13 13h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 5v-3h3v3h-3z" transform="translate(0 -2)" />
+              <path d="M18 18h3v3h-3v-3z" />
+            </svg>
+          </div>
+          <h2>QR Code Recall</h2>
+          <p>Memorise ten QR codes and their numbers, then recall the right order.</p>
+          <footer>
+            <span class="chip">Memory</span>
+            <span class="play">Play now <span aria-hidden="true">&rarr;</span></span>
+          </footer>
+        </a>
+
+        <div class="game-card ghost" aria-hidden="true">
+          <p>More challenges coming soon</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

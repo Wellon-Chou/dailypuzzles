@@ -1,0 +1,576 @@
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --ink: #111827;
+  --muted: #667085;
+  --line: #e4e8f0;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --success: #149761;
+  --success-soft: #e8f8ef;
+  --danger: #d14343;
+  --danger-soft: #fff0f0;
+  --warning: #f59e0b;
+  --shadow: 0 22px 60px rgba(16, 24, 40, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37, 99, 235, 0.12), transparent 24rem),
+    radial-gradient(circle at 88% 14%, rgba(20, 151, 97, 0.1), transparent 20rem),
+    linear-gradient(145deg, #fbfdff 0%, var(--bg) 48%, #eef3f9 100%);
+}
+
+button {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(1160px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: clamp(1rem, 4vw, 2.5rem);
+}
+
+.page {
+  display: none;
+  min-height: calc(100vh - clamp(2rem, 8vw, 5rem));
+  animation: pageIn 360ms ease both;
+}
+
+.page.active {
+  display: flex;
+}
+
+#startPage,
+#countdownPage,
+#resultPage {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+#memoryPage,
+#challengePage {
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+#memoryPage {
+  gap: 0.85rem;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  max-width: 760px;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 1;
+  font-weight: 900;
+}
+
+h2 {
+  font-size: clamp(1.65rem, 4vw, 2.8rem);
+  line-height: 1.05;
+  font-weight: 900;
+}
+
+.subtitle {
+  max-width: 640px;
+  margin: 1rem 0 2rem;
+  color: var(--muted);
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.eyebrow {
+  margin-bottom: 0.45rem;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.brand-mark {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.38rem;
+  width: 4.7rem;
+  height: 4.7rem;
+  margin-bottom: 1.4rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(228, 232, 240, 0.9);
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow);
+}
+
+.brand-mark span {
+  border-radius: 0.22rem;
+  background: var(--ink);
+}
+
+.brand-mark span:nth-child(2) {
+  background: var(--primary);
+}
+
+.brand-mark span:nth-child(3) {
+  background: var(--success);
+}
+
+.brand-mark span:nth-child(4) {
+  background: var(--warning);
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 3.35rem;
+  padding: 0 1.45rem;
+  border-radius: 0.7rem;
+  font-weight: 900;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.primary-button {
+  color: #fff;
+  background: var(--primary);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+}
+
+.secondary-button {
+  color: var(--ink);
+  background: #e9eef8;
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-2px);
+}
+
+.primary-button:active,
+.secondary-button:active {
+  transform: translateY(0);
+}
+
+.countdown-number {
+  color: var(--primary);
+  font-size: clamp(8rem, 34vw, 18rem);
+  font-weight: 900;
+  line-height: 1;
+  animation: pulseNumber 900ms ease both;
+}
+
+.top-bar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.timer-card {
+  flex: 0 0 auto;
+  min-width: 12rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 10px 28px rgba(16, 24, 40, 0.07);
+  text-align: right;
+}
+
+.timer-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.timer-card strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.35rem, 1.2vw, 0.75rem);
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.qr-tile,
+.challenge-card,
+.stat {
+  border: 1px solid rgba(228, 232, 240, 0.95);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.qr-tile {
+  min-width: 0;
+  padding: clamp(0.28rem, 1vw, 0.55rem);
+  border-radius: 0.65rem;
+  animation: cardRise 420ms ease both;
+}
+
+.qr-visual {
+  display: grid;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 5%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0.2rem;
+  background: #fff;
+}
+
+.qr-module {
+  border-radius: 0;
+  background: transparent;
+}
+
+.qr-module.dark {
+  background: #000;
+}
+
+.qr-tile strong {
+  display: block;
+  padding-top: 0.42rem;
+  color: var(--ink);
+  font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+  font-weight: 900;
+  text-align: center;
+}
+
+.sticky-action {
+  align-self: center;
+  margin-top: auto;
+}
+
+.challenge-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(320px, 1fr);
+  gap: clamp(1rem, 4vw, 2rem);
+  align-items: center;
+}
+
+.challenge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: clamp(1rem, 4vw, 1.6rem);
+  border-radius: 0.9rem;
+}
+
+.large-qr {
+  width: min(62vw, 340px);
+  max-width: 100%;
+}
+
+.answer-feedback {
+  min-height: 1.45rem;
+  margin-top: 1rem;
+  font-weight: 900;
+}
+
+.answer-feedback.correct {
+  color: var(--success);
+}
+
+.answer-feedback.incorrect {
+  color: var(--danger);
+}
+
+.option-label {
+  margin-bottom: 0.75rem;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.number-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.number-button {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: clamp(1.15rem, 4vw, 1.55rem);
+  font-weight: 900;
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.07);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.number-button:hover {
+  border-color: rgba(37, 99, 235, 0.45);
+  transform: translateY(-2px);
+}
+
+.number-button.correct {
+  border-color: rgba(20, 151, 97, 0.3);
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+.number-button.incorrect {
+  border-color: rgba(209, 67, 67, 0.32);
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.number-button:disabled {
+  cursor: default;
+}
+
+.accuracy-ring {
+  --accuracy: 0%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  place-items: center;
+  position: relative;
+  width: 11.5rem;
+  aspect-ratio: 1 / 1;
+  margin: 1.3rem 0;
+  border-radius: 999px;
+  background: conic-gradient(
+    var(--primary) var(--accuracy),
+    rgba(37, 99, 235, 0.12) 0
+  );
+  box-shadow: var(--shadow);
+}
+
+.accuracy-ring::before {
+  position: absolute;
+  inset: 0.75rem;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.96);
+  content: "";
+}
+
+.accuracy-ring strong {
+  position: relative;
+  z-index: 1;
+  font-size: 2.3rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.accuracy-ring span {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  width: min(560px, 100%);
+}
+
+.stat {
+  min-height: 7rem;
+  padding: 1rem;
+  border-radius: 0.8rem;
+}
+
+.stat span {
+  display: block;
+  min-height: 2.2rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.stat strong {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: clamp(1.35rem, 5vw, 1.9rem);
+  font-weight: 900;
+}
+
+.result-feedback {
+  margin: 1.15rem 0 1.2rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.result-feedback.master {
+  color: var(--success);
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseNumber {
+  0% {
+    opacity: 0;
+    transform: scale(0.84);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 0.96;
+    transform: scale(1);
+  }
+}
+
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .qr-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .challenge-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .top-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .timer-card {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell {
+    padding: 1rem;
+  }
+
+  .number-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .number-button {
+    border-radius: 0.55rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+}
+
+.site-header {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  padding: 1rem clamp(1rem, 4vw, 2.5rem) 0;
+}
+
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.home-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.12);
+}
+
+a.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.page {
+  min-height: calc(100vh - clamp(2rem, 8vw, 5rem) - 3.6rem);
+}

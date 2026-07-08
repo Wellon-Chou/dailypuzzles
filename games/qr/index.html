@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Memory Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="home-link" href="../../index.html"><span aria-hidden="true">&larr;</span> All Games</a>
+    </header>
+    <main class="app-shell">
+      <section id="startPage" class="page active">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <p class="eyebrow">Brain Training</p>
+        <h1>QR Code Memory Game Challenge</h1>
+        <p class="subtitle">
+          Study 10 QR codes, remember their number order, then test your recall.
+        </p>
+        <button id="startButton" class="primary-button" type="button">
+          Start Challenge
+        </button>
+      </section>
+
+      <section id="countdownPage" class="page">
+        <p class="eyebrow">Get Ready</p>
+        <div id="countdownNumber" class="countdown-number">3</div>
+      </section>
+
+      <section id="memoryPage" class="page">
+        <header class="top-bar">
+          <div>
+            <p class="eyebrow">Memorising Page</p>
+            <h2>Memorise the QR codes</h2>
+          </div>
+          <div class="timer-card">
+            <span>Memorising Time</span>
+            <strong id="memoryTimer">03:00</strong>
+          </div>
+        </header>
+
+        <div id="qrGrid" class="qr-grid" aria-live="polite"></div>
+
+        <button id="challengeButton" class="primary-button sticky-action" type="button">
+          Start Challenge
+        </button>
+      </section>
+
+      <section id="challengePage" class="page">
+        <header class="top-bar">
+          <div>
+            <p id="challengeProgress" class="eyebrow">QR Code 1 of 10</p>
+            <h2>Select the matching number</h2>
+          </div>
+          <div class="timer-card">
+            <span>Recall Time</span>
+            <strong id="recallTimer">00:00</strong>
+          </div>
+        </header>
+
+        <div class="challenge-layout">
+          <div class="challenge-card">
+            <div id="challengeQr" class="large-qr" aria-label="QR code to recall"></div>
+            <p id="answerFeedback" class="answer-feedback" aria-live="polite"></p>
+          </div>
+
+          <div>
+            <p class="option-label">Choose the original number</p>
+            <div id="numberGrid" class="number-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="resultPage" class="page">
+        <p class="eyebrow">Result Page</p>
+        <h2 id="scoreText">You remembered 0/10 QR Code</h2>
+
+        <div class="accuracy-ring">
+          <strong id="accuracyText">0%</strong>
+          <span>Accuracy</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <span>Total time taken to recall</span>
+            <strong id="recallTimeText">00:00</strong>
+          </div>
+          <div class="stat">
+            <span>Total time to memorise</span>
+            <strong id="memoriseTimeText">03:00</strong>
+          </div>
+        </div>
+
+        <p id="resultFeedback" class="result-feedback">
+          Keep training your memory!
+        </p>
+
+        <div class="result-actions">
+          <button id="playAgainButton" class="primary-button" type="button">
+            Play Again
+          </button>
+          <button id="shareButton" class="secondary-button" type="button">
+            Share Score
+          </button>
+          <a href="../../index.html" class="secondary-button">All Games</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

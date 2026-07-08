@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Names & Faces Memory Challenge</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="home-link" href="../../index.html"><span aria-hidden="true">&larr;</span> All Games</a>
+  </header>
+  <main class="app-shell">
+    <section id="startPage" class="screen screen-active start-screen">
+      <div class="brand-mark" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <p class="eyebrow">Brain Training</p>
+      <h1>Names &amp; Faces Memory Challenge</h1>
+      <p class="subtitle">How many names can your brain remember?</p>
+      <button id="startBtn" class="primary-btn">Start Challenge</button>
+    </section>
+
+    <section id="countdownPage" class="screen countdown-screen" aria-live="polite">
+      <div id="countdownNumber" class="countdown-number">3</div>
+    </section>
+
+    <section id="memoryPage" class="screen memory-screen">
+      <header class="top-bar">
+        <div>
+          <p class="eyebrow">Memory Stage</p>
+          <h2>Study each face and name</h2>
+        </div>
+        <div class="timer-pill">
+          <span>Time Remaining:</span>
+          <strong id="memoryTimer">01:00</strong>
+        </div>
+      </header>
+      <div id="peopleGrid" class="people-grid" aria-live="polite"></div>
+      <div class="action-row"><button id="quizBtn" class="primary-btn">Start Quiz Now</button></div>
+    </section>
+
+    <section id="quizPage" class="screen quiz-screen">
+      <header class="top-bar compact">
+        <div>
+          <p class="eyebrow">Quiz Stage</p>
+          <h2 id="quizProgress">Person 1 of 10</h2>
+        </div>
+        <div class="timer-pill">
+          <span>Recall Time:</span>
+          <strong id="quizTimer">00:00</strong>
+        </div>
+      </header>
+      <div class="quiz-card">
+        <img id="quizFace" src="" alt="Person to identify">
+        <p class="question">What is this person's name?</p>
+        <div id="answerOptions" class="options-grid"></div>
+      </div>
+    </section>
+
+    <section id="resultPage" class="screen result-screen">
+      <div class="result-panel">
+        <p class="eyebrow">Final Score</p>
+        <h2 id="scoreText">You remembered 0/10 names</h2>
+        <div class="score-ring">
+          <span id="accuracyText">0%</span>
+          <small>Accuracy</small>
+        </div>
+        <div class="result-stats">
+          <div><span>Total time taken to recall</span><strong id="recallTimeText">00:00</strong></div>
+          <div><span>Total time to memorize</span><strong id="memoryTimeText">00:00</strong></div>
+        </div>
+        <p id="feedbackText" class="feedback">Keep training your memory!</p>
+        <div class="result-actions">
+          <button id="playAgainBtn" class="primary-btn">Play Again</button>
+          <button id="shareBtn" class="secondary-btn">Share Score</button>
+          <a href="../../index.html" class="secondary-btn">All Games</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
+
