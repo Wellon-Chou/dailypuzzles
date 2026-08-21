@@ -6,8 +6,8 @@
   --line: #e5e9f2;
   --accent: #3563ff;
   --accent-dark: #244bd4;
-  --mint: #17b890;
-  --mint-dark: #0f8e6f;
+  --mint: #008000;
+  --mint-dark: #005c00;
   --warning: #f59e0b;
   --coral: #ff6b5f;
   --shadow: 0 24px 70px rgba(23, 32, 51, 0.12);
@@ -271,9 +271,9 @@ h1 {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 34% 28%, #5fdcbd 0 11%, var(--mint) 38%, var(--mint-dark) 100%);
-  box-shadow: 0 8px 18px rgba(15, 142, 111, 0.22),
-    inset -3px -5px 8px rgba(6, 84, 65, 0.16),
+  background: radial-gradient(circle at 34% 28%, #4cc44c 0 11%, var(--mint) 38%, var(--mint-dark) 100%);
+  box-shadow: 0 8px 18px rgba(0, 128, 0, 0.22),
+    inset -3px -5px 8px rgba(0, 64, 0, 0.18),
     inset 3px 3px 7px rgba(255, 255, 255, 0.28);
   transform: translate3d(0, 0, 0);
   transition: background 350ms ease, box-shadow 200ms ease, filter 200ms ease;
@@ -305,7 +305,7 @@ h1 {
 }
 
 .ball.correct {
-  box-shadow: 0 0 0 4px var(--mint), 0 8px 18px rgba(23, 184, 144, 0.32);
+  box-shadow: 0 0 0 4px var(--mint), 0 8px 18px rgba(0, 128, 0, 0.32);
 }
 
 .ball.wrong {

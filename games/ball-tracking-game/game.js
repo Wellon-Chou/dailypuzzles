@@ -15,7 +15,7 @@ const speedButtons = [...document.querySelectorAll('.speed')];
 const targetCountButtons = [...document.querySelectorAll('.target-count')];
 
 const TRACK_SECONDS = 10;
-const TARGET_REVEAL_MS = 1800;
+const TARGET_REVEAL_MS = 3000;
 let ballCount = 6;
 let speedMultiplier = 1;
 let targetCount = 1;
