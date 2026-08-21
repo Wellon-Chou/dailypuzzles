@@ -17,7 +17,11 @@ const trackTimeButtons = [...document.querySelectorAll('.track-time')];
 const trackTimeGroup = document.querySelector('#trackTimeGroup');
 const timerCard = document.querySelector('#timerCard');
 
-const TARGET_REVEAL_MS = 1800;
+const TARGET_REVEAL_MS = 900;
+// Kept in sync with --ball-fade in styles.css so the two can't drift apart.
+const FADE_MS = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ball-fade')) || 3000;
+// Three countdown steps spread across the fade, so they end together.
+const COUNT_STEP_MS = FADE_MS / 3;
 let trackSeconds = 10;
 let ballCount = 6;
 let speedMultiplier = 1;
@@ -128,41 +132,37 @@ async function startRound() {
   showTimer(true);
   primaryButton.disabled = true;
   buttonLabel.textContent = targetCount === 1 ? 'Watch the blue ball' : `Watch the ${targetCount} blue balls`;
-  instruction.textContent = 'Get ready. The balls will appear after the countdown.';
-  setStatus('tracking', 'Get Ready');
+  setStatus('tracking', 'Memorise');
   state = 'intro';
   settingButtons.forEach(button => button.disabled = true);
 
-  countdown.textContent = '3';
-  countdown.classList.add('pop');
-  await delay(800);
-  if (thisRun !== runToken) return;
-  countdown.classList.remove('pop');
-  countdown.textContent = '2';
-  void countdown.offsetWidth;
-  countdown.classList.add('pop');
-  await delay(800);
-  if (thisRun !== runToken) return;
-  countdown.classList.remove('pop');
-  countdown.textContent = '1';
-  void countdown.offsetWidth;
-  countdown.classList.add('pop');
-  await delay(800);
-  if (thisRun !== runToken) return;
-  countdown.classList.remove('pop');
-  countdown.textContent = '';
-
+  // Balls first, so the target is on screen before anything counts down.
   makeBalls();
-  setStatus('tracking', 'Memorise');
   instruction.textContent = `Remember the ${targetCount === 1 ? 'blue ball' : `${targetCount} blue balls`} before ${targetCount === 1 ? 'it changes' : 'they change'} colour.`;
   await delay(TARGET_REVEAL_MS);
   if (thisRun !== runToken) return;
+
   targetIndices.forEach(index => {
-    // slow-fade must land before the colour change so the 3s transition applies.
+    // slow-fade must land before the colour change so the long transition applies.
     balls[index].el.classList.add('slow-fade');
     balls[index].el.classList.remove('target-visible');
     balls[index].el.setAttribute('aria-label', `Green ball ${index + 1}`);
   });
+  instruction.textContent = `Watch ${targetCount === 1 ? 'it' : 'them'} fade to green. Tracking starts at zero.`;
+
+  // The 3-2-1 runs over the balls for exactly as long as the fade takes, so
+  // nothing moves and the clock stays full until the colour has gone.
+  for (const step of ['3', '2', '1']) {
+    countdown.classList.remove('pop');
+    countdown.textContent = step;
+    void countdown.offsetWidth;
+    countdown.classList.add('pop');
+    await delay(COUNT_STEP_MS);
+    if (thisRun !== runToken) return;
+  }
+  countdown.classList.remove('pop');
+  countdown.textContent = '';
+
   state = 'tracking';
   trackStartedAt = performance.now();
   setStatus('tracking', 'Tracking');

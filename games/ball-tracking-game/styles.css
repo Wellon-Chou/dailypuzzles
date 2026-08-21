@@ -11,6 +11,9 @@
   --warning: #f59e0b;
   --coral: #ff6b5f;
   --shadow: 0 24px 70px rgba(23, 32, 51, 0.12);
+  /* Blue-to-green fade length. game.js reads this so it can wait it out
+     before the balls start moving — keep the value in ms. */
+  --ball-fade: 3000ms;
 }
 
 * {
@@ -340,11 +343,11 @@ h1 {
 /* Applied only for the blue-to-green change at the start of tracking, so the
    snap back to blue at the result stays quick. */
 .ball.slow-fade {
-  transition: box-shadow 3000ms linear, filter 200ms ease;
+  transition: box-shadow var(--ball-fade) linear, filter 200ms ease;
 }
 
 .ball.slow-fade::after {
-  transition: opacity 3000ms linear;
+  transition: opacity var(--ball-fade) linear;
 }
 
 .ball.selectable {
@@ -377,6 +380,8 @@ h1 {
 .countdown-number {
   position: absolute;
   inset: 0;
+  /* Over the balls, under the result card. */
+  z-index: 3;
   display: grid;
   place-items: center;
   pointer-events: none;
@@ -387,7 +392,7 @@ h1 {
 }
 
 .countdown-number.pop {
-  animation: countPulse 0.8s ease both;
+  animation: countPulse 0.9s ease both;
 }
 
 .result-card {
@@ -399,11 +404,12 @@ h1 {
   width: min(84%, 330px);
   padding: 26px;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.94);
+  /* Half-transparent, and no backdrop blur, so the highlighted ball behind the
+     card stays readable. */
+  background: rgba(255, 255, 255, 0.5);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
 }
 
 .result-icon {
@@ -474,6 +480,8 @@ h1 {
   }
 }
 
+/* Peaks translucent, not solid — it sits over the balls and must not hide
+   the one that is fading. */
 @keyframes countPulse {
   0% {
     opacity: 0;
@@ -481,7 +489,7 @@ h1 {
   }
 
   35% {
-    opacity: 1;
+    opacity: 0.5;
     transform: scale(1.06);
   }
 
