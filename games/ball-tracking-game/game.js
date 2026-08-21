@@ -13,9 +13,12 @@ const settingButtons = [...document.querySelectorAll('.setting-button')];
 const ballCountButtons = [...document.querySelectorAll('.ball-count')];
 const speedButtons = [...document.querySelectorAll('.speed')];
 const targetCountButtons = [...document.querySelectorAll('.target-count')];
+const trackTimeButtons = [...document.querySelectorAll('.track-time')];
+const trackTimeGroup = document.querySelector('#trackTimeGroup');
+const timerCard = document.querySelector('#timerCard');
 
-const TRACK_SECONDS = 10;
 const TARGET_REVEAL_MS = 3000;
+let trackSeconds = 10;
 let ballCount = 6;
 let speedMultiplier = 1;
 let targetCount = 1;
@@ -34,6 +37,13 @@ function setStatus(type, label) {
 }
 
 function setTimer(seconds) { timerValue.textContent = `${seconds.toFixed(1)}s`; }
+
+// The status row shows the tracking-time picker until a round starts,
+// then swaps it for the live countdown.
+function showTimer(playing) {
+  trackTimeGroup.hidden = playing;
+  timerCard.hidden = !playing;
+}
 
 function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -98,8 +108,8 @@ function animate(now) {
 
   if (state === 'tracking') {
     const elapsed = (now - trackStartedAt) / 1000;
-    setTimer(Math.max(0, TRACK_SECONDS - elapsed));
-    if (elapsed >= TRACK_SECONDS) {
+    setTimer(Math.max(0, trackSeconds - elapsed));
+    if (elapsed >= trackSeconds) {
       finishTracking();
       return;
     }
@@ -114,7 +124,8 @@ async function startRound() {
   balls.forEach(ball => ball.el.remove());
   balls = [];
   resultCard.hidden = true;
-  setTimer(TRACK_SECONDS);
+  setTimer(trackSeconds);
+  showTimer(true);
   primaryButton.disabled = true;
   buttonLabel.textContent = targetCount === 1 ? 'Watch the blue ball' : `Watch the ${targetCount} blue balls`;
   instruction.textContent = 'Get ready. The balls will appear after the countdown.';
@@ -206,6 +217,7 @@ function chooseBall(index) {
   instruction.textContent = correct ? 'Excellent focus and visual tracking!' : 'Good effort — tracking gets easier with practice.';
   primaryButton.disabled = false;
   settingButtons.forEach(button => button.disabled = false);
+  showTimer(false);
   buttonLabel.textContent = 'Play Again';
 }
 
@@ -219,13 +231,14 @@ function bindSetting(buttons, updateValue) {
     if (state !== 'ready' && state !== 'result') return;
     updateValue(Number(button.dataset.value));
     buttons.forEach(option => option.classList.toggle('active', option === button));
-    instruction.textContent = `${ballCount} balls · ×${speedMultiplier} speed · ${targetCount} blue ${targetCount === 1 ? 'ball' : 'balls'}.`;
+    instruction.textContent = `${ballCount} balls · ×${speedMultiplier} speed · ${targetCount} blue ${targetCount === 1 ? 'ball' : 'balls'} · ${trackSeconds}s tracking.`;
   }));
 }
 
 bindSetting(ballCountButtons, value => { ballCount = value; });
 bindSetting(speedButtons, value => { speedMultiplier = value; });
 bindSetting(targetCountButtons, value => { targetCount = value; });
+bindSetting(trackTimeButtons, value => { trackSeconds = value; setTimer(value); });
 
 function resetGame() {
   runToken += 1;
@@ -236,7 +249,8 @@ function resetGame() {
   countdown.textContent = '';
   countdown.classList.remove('pop');
   resultCard.hidden = true;
-  setTimer(TRACK_SECONDS);
+  setTimer(trackSeconds);
+  showTimer(false);
   setStatus('ready', 'Ready');
   instruction.textContent = 'Watch the blue ball, then keep tracking it once it blends in with the others.';
   primaryButton.disabled = false;

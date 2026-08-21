@@ -57,7 +57,15 @@
 
         <div class="status-row">
           <div id="statusBadge" class="status-badge ready"><span></span><b>Ready</b></div>
-          <div class="timer-card" aria-label="Time remaining">
+          <div id="trackTimeGroup" class="choice-group track-time-group" role="group" aria-label="Tracking time">
+            <span class="group-label">Tracking Time</span>
+            <div class="choice-options">
+              <button type="button" class="setting-button track-time active" data-value="10">10s</button>
+              <button type="button" class="setting-button track-time" data-value="15">15s</button>
+              <button type="button" class="setting-button track-time" data-value="20">20s</button>
+            </div>
+          </div>
+          <div id="timerCard" class="timer-card" aria-label="Time remaining" hidden>
             <span>Tracking Time</span>
             <strong id="timerValue">10.0s</strong>
           </div>
