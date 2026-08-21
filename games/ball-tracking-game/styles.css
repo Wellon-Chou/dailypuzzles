@@ -11,8 +11,8 @@
   --warning: #f59e0b;
   --coral: #ff6b5f;
   --shadow: 0 24px 70px rgba(23, 32, 51, 0.12);
-  /* Blue-to-green fade length. game.js reads this so it can wait it out
-     before the balls start moving — keep the value in ms. */
+  /* Blue-to-green fade length. Runs entirely in CSS, over the first seconds
+     of tracking while the balls are already moving. */
   --ball-fade: 3000ms;
 }
 
