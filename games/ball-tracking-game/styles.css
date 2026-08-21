@@ -295,6 +295,10 @@ h1 {
   mask-image: radial-gradient(circle, #000, transparent 85%);
 }
 
+/* The ball is green underneath, with the blue gradient stacked on top as a
+   pseudo-element. Swapping colour crossfades that layer's opacity, because a
+   transition between two gradient *images* is discrete in every engine — the
+   browser flips them at the halfway point instead of blending. */
 .ball {
   position: absolute;
   width: clamp(38px, 9.5%, 52px);
@@ -307,14 +311,40 @@ h1 {
     inset -3px -5px 8px rgba(0, 64, 0, 0.18),
     inset 3px 3px 7px rgba(255, 255, 255, 0.28);
   transform: translate3d(0, 0, 0);
-  transition: background 350ms ease, box-shadow 200ms ease, filter 200ms ease;
+  transition: box-shadow 200ms ease, filter 200ms ease;
+}
+
+.ball::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 34% 28%, #86a8ff 0 11%, var(--accent) 38%, var(--accent-dark) 100%);
+  box-shadow: inset -3px -5px 8px rgba(16, 45, 145, 0.18),
+    inset 3px 3px 7px rgba(255, 255, 255, 0.3);
+  transition: opacity 350ms ease;
+}
+
+.ball.target-visible::after {
+  opacity: 1;
 }
 
 .ball.target-visible {
-  background: radial-gradient(circle at 34% 28%, #86a8ff 0 11%, var(--accent) 38%, var(--accent-dark) 100%);
   box-shadow: 0 8px 18px rgba(53, 99, 255, 0.26),
     inset -3px -5px 8px rgba(16, 45, 145, 0.18),
     inset 3px 3px 7px rgba(255, 255, 255, 0.3);
+}
+
+/* Applied only for the blue-to-green change at the start of tracking, so the
+   snap back to blue at the result stays quick. */
+.ball.slow-fade {
+  transition: box-shadow 3000ms linear, filter 200ms ease;
+}
+
+.ball.slow-fade::after {
+  transition: opacity 3000ms linear;
 }
 
 .ball.selectable {

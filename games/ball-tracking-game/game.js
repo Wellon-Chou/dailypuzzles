@@ -17,7 +17,7 @@ const trackTimeButtons = [...document.querySelectorAll('.track-time')];
 const trackTimeGroup = document.querySelector('#trackTimeGroup');
 const timerCard = document.querySelector('#timerCard');
 
-const TARGET_REVEAL_MS = 3000;
+const TARGET_REVEAL_MS = 1800;
 let trackSeconds = 10;
 let ballCount = 6;
 let speedMultiplier = 1;
@@ -158,6 +158,8 @@ async function startRound() {
   await delay(TARGET_REVEAL_MS);
   if (thisRun !== runToken) return;
   targetIndices.forEach(index => {
+    // slow-fade must land before the colour change so the 3s transition applies.
+    balls[index].el.classList.add('slow-fade');
     balls[index].el.classList.remove('target-visible');
     balls[index].el.setAttribute('aria-label', `Green ball ${index + 1}`);
   });
@@ -179,6 +181,7 @@ function finishTracking() {
   instruction.textContent = `The balls have stopped. Select the ${targetCount} ${targetCount === 1 ? 'ball' : 'balls'} that started blue.`;
   buttonLabel.textContent = targetCount === 1 ? 'Choose a ball above' : `Choose ${targetCount} balls above`;
   balls.forEach((ball, index) => {
+    ball.el.classList.remove('slow-fade');
     ball.el.classList.add('selectable');
     ball.el.tabIndex = 0;
     ball.el.setAttribute('aria-label', `Choose ball ${index + 1}`);
