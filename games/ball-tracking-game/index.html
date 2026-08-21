@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f7fb" />
+    <title>Focus Ball — Visual Tracking Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="home-link" href="../../index.html"><span aria-hidden="true">&larr;</span> All Games</a>
+    </header>
+
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="gameTitle">
+        <h1 id="gameTitle">Focus Ball Tracking Challenge</h1>
+        <p id="instruction" class="subtitle" aria-live="polite">
+          Watch the blue ball, then keep tracking it once it blends in with the others.
+        </p>
+      </section>
+
+      <section class="game-area" aria-label="Game controls and play area">
+        <div id="settingsPanel" class="settings-panel" aria-label="Game settings">
+          <fieldset class="choice-group">
+            <legend>Total balls</legend>
+            <div class="choice-options four">
+              <button type="button" class="setting-button ball-count active" data-value="6">6</button>
+              <button type="button" class="setting-button ball-count" data-value="7">7</button>
+              <button type="button" class="setting-button ball-count" data-value="8">8</button>
+              <button type="button" class="setting-button ball-count" data-value="9">9</button>
+            </div>
+          </fieldset>
+          <fieldset class="choice-group">
+            <legend>Speed</legend>
+            <div class="choice-options">
+              <button type="button" class="setting-button speed active" data-value="1">&times;1</button>
+              <button type="button" class="setting-button speed" data-value="2">&times;2</button>
+              <button type="button" class="setting-button speed" data-value="3">&times;3</button>
+            </div>
+          </fieldset>
+          <fieldset class="choice-group">
+            <legend>Blue balls</legend>
+            <div class="choice-options">
+              <button type="button" class="setting-button target-count active" data-value="1">1</button>
+              <button type="button" class="setting-button target-count" data-value="2">2</button>
+              <button type="button" class="setting-button target-count" data-value="3">3</button>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="status-row">
+          <div id="statusBadge" class="status-badge ready"><span></span><b>Ready</b></div>
+          <div class="timer-card" aria-label="Time remaining">
+            <span>Tracking Time</span>
+            <strong id="timerValue">10.0s</strong>
+          </div>
+        </div>
+
+        <div id="arena" class="arena" aria-label="Ball tracking arena">
+          <div class="grid" aria-hidden="true"></div>
+          <div id="countdown" class="countdown-number" aria-live="assertive"></div>
+          <div id="resultCard" class="result-card" aria-live="assertive" hidden>
+            <div id="resultIcon" class="result-icon">&check;</div>
+            <h2 id="resultTitle">Sharp eyes!</h2>
+            <p id="resultText">You tracked the correct ball.</p>
+          </div>
+        </div>
+
+        <button id="primaryButton" class="primary-button" type="button">
+          <span id="buttonLabel">Start Challenge</span>
+        </button>
+        <p class="tip">Tip: keep your eyes relaxed and focus on the whole play area.</p>
+      </section>
+    </main>
+
+    <script src="game.js"></script>
+  </body>
+</html>
