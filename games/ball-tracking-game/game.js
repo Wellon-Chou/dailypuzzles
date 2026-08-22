@@ -19,6 +19,13 @@ const timerCard = document.querySelector('#timerCard');
 
 const TARGET_REVEAL_MS = 900;
 const COUNT_STEP_MS = 1000;
+// Paths are simulated at a fixed step and then played back against the clock,
+// so what gets validated is exactly what gets shown.
+const STEP_MS = 1000 / 60;
+// Daylight required between two balls once they stop, so a pick is unambiguous.
+const BALL_GAP = 2;
+// Candidate rounds to roll before settling for the roomiest one found.
+const MAX_LAYOUT_TRIES = 60;
 let trackSeconds = 10;
 let ballCount = 6;
 let speedMultiplier = 1;
@@ -28,9 +35,9 @@ let targetIndices = new Set();
 let selectedIndices = new Set();
 let state = 'ready';
 let animationId = null;
-let lastFrame = 0;
 let trackStartedAt = 0;
 let runToken = 0;
+let pathSteps = 0;
 
 function setStatus(type, label) {
   statusBadge.className = `status-badge ${type}`;
@@ -48,18 +55,93 @@ function showTimer(playing) {
 
 function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
+// Plays one whole round forward at a fixed step and records where every ball is
+// on every frame. Balls fly straight through each other, exactly as before —
+// only where they come to rest matters.
+function simulateRound(size, padding, cols, rows, width, height) {
+  const dt = STEP_MS / 1000;
+  const cellW = (width - padding * 2) / cols;
+  const cellH = (height - padding * 2) / rows;
+  const paths = [];
+  const movers = [];
+
+  for (let i = 0; i < ballCount; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const angle = Math.random() * Math.PI * 2;
+    const speed = (92 + Math.random() * 48) * speedMultiplier;
+    movers.push({
+      x: padding + col * cellW + Math.random() * Math.max(0, cellW - size),
+      y: padding + row * cellH + Math.random() * Math.max(0, cellH - size),
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed
+    });
+    paths.push(new Float32Array(pathSteps * 2));
+  }
+
+  for (let step = 0; step < pathSteps; step++) {
+    for (let i = 0; i < movers.length; i++) {
+      const mover = movers[i];
+      if (step > 0) {
+        mover.x += mover.vx * dt;
+        mover.y += mover.vy * dt;
+        if (mover.x <= 6 || mover.x + size >= width - 6) {
+          mover.vx *= -1;
+          mover.x = Math.max(6, Math.min(width - size - 6, mover.x));
+        }
+        if (mover.y <= 6 || mover.y + size >= height - 6) {
+          mover.vy *= -1;
+          mover.y = Math.max(6, Math.min(height - size - 6, mover.y));
+        }
+      }
+      paths[i][step * 2] = mover.x;
+      paths[i][step * 2 + 1] = mover.y;
+    }
+  }
+
+  return { paths, finalGap: smallestFinalGap(paths, size) };
+}
+
+// Closest any two balls come to each other on the last frame. Every ball is the
+// same size, so the radii sum to one ball width.
+function smallestFinalGap(paths, size) {
+  const last = (pathSteps - 1) * 2;
+  let smallest = Infinity;
+  for (let i = 0; i < paths.length; i++) {
+    for (let j = i + 1; j < paths.length; j++) {
+      const dx = paths[j][last] - paths[i][last];
+      const dy = paths[j][last + 1] - paths[i][last + 1];
+      smallest = Math.min(smallest, Math.hypot(dx, dy) - size);
+    }
+  }
+  return smallest;
+}
+
 function makeBalls() {
   balls.forEach(ball => ball.el.remove());
   balls = [];
-  const size = Math.max(38, Math.min(52, arena.clientWidth * .095));
+  const width = arena.clientWidth;
+  const height = arena.clientHeight;
+  const size = Math.max(38, Math.min(52, width * .095));
   const padding = size * .55;
   const cols = 3;
   const rows = Math.ceil(ballCount / cols);
+  pathSteps = Math.ceil(trackSeconds * 1000 / STEP_MS) + 1;
 
   targetIndices = new Set();
   while (targetIndices.size < targetCount) {
     targetIndices.add(Math.floor(Math.random() * ballCount));
   }
+
+  // Keep the first rolled round that ends with everything clear of its
+  // neighbours; if none does, show the roomiest of the attempts.
+  let chosen = null;
+  for (let attempt = 0; attempt < MAX_LAYOUT_TRIES; attempt++) {
+    const candidate = simulateRound(size, padding, cols, rows, width, height);
+    if (chosen === null || candidate.finalGap > chosen.finalGap) chosen = candidate;
+    if (chosen.finalGap >= BALL_GAP) break;
+  }
+
   for (let i = 0; i < ballCount; i++) {
     const el = document.createElement('button');
     el.type = 'button';
@@ -67,18 +149,11 @@ function makeBalls() {
     el.className = `ball${isTarget ? ' target-visible' : ''}`;
     el.setAttribute('aria-label', isTarget ? 'Blue target ball' : `Green ball ${i + 1}`);
     el.tabIndex = -1;
+    el.addEventListener('click', () => chooseBall(i));
     arena.appendChild(el);
 
-    const cellW = (arena.clientWidth - padding * 2) / cols;
-    const cellH = (arena.clientHeight - padding * 2) / rows;
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    const x = padding + col * cellW + Math.random() * Math.max(0, cellW - size);
-    const y = padding + row * cellH + Math.random() * Math.max(0, cellH - size);
-    const angle = Math.random() * Math.PI * 2;
-    const speed = (92 + Math.random() * 48) * speedMultiplier;
-    const ball = { el, x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size };
-    el.addEventListener('click', () => chooseBall(i));
+    const path = chosen.paths[i];
+    const ball = { el, size, path, x: path[0], y: path[1] };
     balls.push(ball);
     renderBall(ball);
   }
@@ -86,34 +161,27 @@ function makeBalls() {
 
 function renderBall(ball) { ball.el.style.transform = `translate3d(${ball.x}px, ${ball.y}px, 0)`; }
 
+// Playback, not simulation: the clock picks a position along the recorded path,
+// so a slow or fast frame changes smoothness but never the destination.
 function animate(now) {
-  if (state !== 'tracking' && state !== 'intro') return;
-  const dt = Math.min((now - lastFrame) / 1000 || 0, .032);
-  lastFrame = now;
-  const width = arena.clientWidth;
-  const height = arena.clientHeight;
+  if (state !== 'tracking') return;
+  const elapsed = (now - trackStartedAt) / 1000;
+  const exact = Math.min(elapsed / trackSeconds, 1) * (pathSteps - 1);
+  const step = Math.min(Math.floor(exact), pathSteps - 2);
+  const blend = exact - step;
 
   balls.forEach(ball => {
-    ball.x += ball.vx * dt;
-    ball.y += ball.vy * dt;
-    if (ball.x <= 6 || ball.x + ball.size >= width - 6) {
-      ball.vx *= -1;
-      ball.x = Math.max(6, Math.min(width - ball.size - 6, ball.x));
-    }
-    if (ball.y <= 6 || ball.y + ball.size >= height - 6) {
-      ball.vy *= -1;
-      ball.y = Math.max(6, Math.min(height - ball.size - 6, ball.y));
-    }
+    const from = step * 2;
+    const to = from + 2;
+    ball.x = ball.path[from] + (ball.path[to] - ball.path[from]) * blend;
+    ball.y = ball.path[from + 1] + (ball.path[to + 1] - ball.path[from + 1]) * blend;
     renderBall(ball);
   });
 
-  if (state === 'tracking') {
-    const elapsed = (now - trackStartedAt) / 1000;
-    setTimer(Math.max(0, trackSeconds - elapsed));
-    if (elapsed >= trackSeconds) {
-      finishTracking();
-      return;
-    }
+  setTimer(Math.max(0, trackSeconds - elapsed));
+  if (elapsed >= trackSeconds) {
+    finishTracking();
+    return;
   }
   animationId = requestAnimationFrame(animate);
 }
@@ -164,7 +232,6 @@ async function startRound() {
   setStatus('tracking', 'Tracking');
   instruction.textContent = `Keep following ${targetCount === 1 ? 'your target' : 'your targets'} as ${targetCount === 1 ? 'it fades' : 'they fade'} into the others.`;
   buttonLabel.textContent = 'Tracking in progress…';
-  lastFrame = performance.now();
   animationId = requestAnimationFrame(animate);
 }
 
@@ -257,8 +324,19 @@ function resetGame() {
   settingButtons.forEach(button => button.disabled = false);
 }
 
+// Paths are baked against the arena size at the start of a round, so a resize
+// invalidates whatever is in flight. Debounced, because resize arrives in
+// bursts — and on mobile every time the URL bar slides away.
+let resizeTimer = null;
 window.addEventListener('resize', () => {
-  if (state === 'ready') resetGame();
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const interrupted = state !== 'ready';
+    resetGame();
+    if (interrupted) {
+      instruction.textContent = 'The window changed size, so the round was reset. Start again when you are ready.';
+    }
+  }, 150);
 });
 
 resetGame();
